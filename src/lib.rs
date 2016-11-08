@@ -1,7 +1,3 @@
-#![allow(dead_code)]
-#![allow(unused_variables)]
-#![allow(unused_mut)]
-
 extern crate regex;
 
 use std::collections::HashMap;
@@ -20,6 +16,15 @@ pub struct Colorize {
 }
 
 impl Colorize {
+    /// returns an instance of Colorize, with default color mappings.
+    pub fn new() -> Colorize {
+        Colorize {
+            colors: default_colors(),
+            disable: false,
+            reset: true,
+        }
+    }
+
     /// colorizes a string `v` according to the settings setup in the struct.
     pub fn color(&self, v: &str) -> String {
         let re: Regex = Regex::new(r"(?i)\[[a-z0-9_-]+\]").unwrap();
@@ -65,15 +70,7 @@ impl Colorize {
     }
 }
 
-pub struct Context {
-    /// the default colors used when colorizing.
-    default_colors: HashMap<&'static str, &'static str>,
-
-    /// [undocumented]
-    def: Colorize,
-}
-
-pub fn init() -> Context {
+fn default_colors() -> HashMap<&'static str, &'static str> {
     let mut default_colors = HashMap::new();
     default_colors.insert("default", "39");
     default_colors.insert("_default_", "49");
@@ -126,29 +123,9 @@ pub fn init() -> Context {
     default_colors.insert("reset", "0");
     default_colors.insert("reset_bold", "21");
 
-    let def = Colorize {
-        colors: default_colors.clone(),
-        disable: false,
-        reset: true,
-    };
-
-    Context {
-        default_colors: default_colors,
-        def: def,
-    }
+    default_colors
 }
 
-impl Context {
-    /// colorizes the string using the default settings.
-    pub fn color(&self, v: &str) -> String {
-        self.def.color(v)
-    }
-
-    /// returns the color sequence that prefixes the given text.
-    pub fn color_prefix(&self, v: &str) -> Option<String> {
-        self.def.color_prefix(v)
-    }
-}
 
 #[cfg(test)]
 mod tests {
@@ -156,21 +133,19 @@ mod tests {
 
     #[test]
     fn it_works() {
-        let ref ctx = init();
-        expect(ctx, "foo", "foo");
-        expect(ctx, "[blue]foo", "\x1B[34mfoo\x1B[0m");
-        expect(ctx, "foo[blue]foo", "foo\x1B[34mfoo\x1B[0m");
-        expect(ctx, "foo[what]foo", "foo[what]foo");
-        expect(ctx, "foo[_blue_]foo", "foo\x1B[44mfoo\x1B[0m");
-        expect(ctx, "foo[bold]foo", "foo\x1B[1mfoo\x1B[0m");
-        expect(ctx, "[blue]foo[bold]bar", "\x1B[34mfoo\x1B[1mbar\x1B[0m");
-        expect(ctx,
-               "[underline]foo[reset]bar",
-               "\x1B[4mfoo\x1B[0mbar\x1B[0m");
+        let ref c = Colorize::new();
+        expect(c, "foo", "foo");
+        expect(c, "[blue]foo", "\x1B[34mfoo\x1B[0m");
+        expect(c, "foo[blue]foo", "foo\x1B[34mfoo\x1B[0m");
+        expect(c, "foo[what]foo", "foo[what]foo");
+        expect(c, "foo[_blue_]foo", "foo\x1B[44mfoo\x1B[0m");
+        expect(c, "foo[bold]foo", "foo\x1B[1mfoo\x1B[0m");
+        expect(c, "[blue]foo[bold]bar", "\x1B[34mfoo\x1B[1mbar\x1B[0m");
+        expect(c, "[underline]foo[reset]bar", "\x1B[4mfoo\x1B[0mbar\x1B[0m");
     }
 
-    fn expect(ctx: &Context, src: &str, expected: &str) {
-        let colored = ctx.color(src);
+    fn expect(c: &Colorize, src: &str, expected: &str) {
+        let colored = c.color(src);
         assert_eq!(expected,
                    colored,
                    "{:?}, {:?}, {:?}",
