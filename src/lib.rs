@@ -1,4 +1,6 @@
 extern crate regex;
+#[macro_use]
+extern crate lazy_static;
 
 use std::collections::HashMap;
 use regex::Regex;
@@ -27,8 +29,10 @@ impl Colorize {
 
     /// colorizes a string `v` according to the settings setup in the struct.
     pub fn color(&self, v: &str) -> String {
-        let re: Regex = Regex::new(r"(?i)\[[a-z0-9_-]+\]").unwrap();
-        let matches: Vec<(usize, usize)> = re.find_iter(v).collect();
+        lazy_static! {
+            static ref RE: Regex = Regex::new(r"(?i)\[[a-z0-9_-]+\]").unwrap();
+        }
+        let matches: Vec<(usize, usize)> = RE.find_iter(v).collect();
         if matches.len() == 0 {
             return v.to_owned();
         }
@@ -65,8 +69,10 @@ impl Colorize {
 
     /// returns the first color sequence that exists in this string.
     pub fn color_prefix(&self, v: &str) -> Option<String> {
-        let re = Regex::new(r"^(?i)(\[[a-z0-9_-]+\])+").unwrap();
-        re.captures(v).and_then(|cap| cap.at(1).map(ToOwned::to_owned))
+        lazy_static! {
+            static ref RE: Regex = Regex::new(r"^(?i)(\[[a-z0-9_-]+\])+").unwrap();
+        }
+        RE.captures(v).and_then(|cap| cap.at(1).map(ToOwned::to_owned))
     }
 }
 

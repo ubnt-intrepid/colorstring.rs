@@ -5,3 +5,4 @@ authors = ["Yusuke Sasaki <yusuke.sasaki.nuem@gmail.com>"]
 
 [dependencies]
 regex = "*"
+lazy_static = "*"
