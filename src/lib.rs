@@ -152,17 +152,30 @@ impl Context {
 
 #[cfg(test)]
 mod tests {
-    use std::io::{self, Write};
     use super::*;
 
     #[test]
     fn it_works() {
-        let ctx = init();
+        let ref ctx = init();
+        expect(ctx, "foo", "foo");
+        expect(ctx, "[blue]foo", "\x1B[34mfoo\x1B[0m");
+        expect(ctx, "foo[blue]foo", "foo\x1B[34mfoo\x1B[0m");
+        expect(ctx, "foo[what]foo", "foo[what]foo");
+        expect(ctx, "foo[_blue_]foo", "foo\x1B[44mfoo\x1B[0m");
+        expect(ctx, "foo[bold]foo", "foo\x1B[1mfoo\x1B[0m");
+        expect(ctx, "[blue]foo[bold]bar", "\x1B[34mfoo\x1B[1mbar\x1B[0m");
+        expect(ctx,
+               "[underline]foo[reset]bar",
+               "\x1B[4mfoo\x1B[0mbar\x1B[0m");
+    }
 
-        let s = "[red]hoge [green][blink_slow]hoee";
-        let colored = ctx.color(s);
-        let mut w = io::stdout();
-        w.write_all(colored.as_bytes()).unwrap();
-        w.write_all(b"\n").unwrap();
+    fn expect(ctx: &Context, src: &str, expected: &str) {
+        let colored = ctx.color(src);
+        assert_eq!(expected,
+                   colored,
+                   "{:?}, {:?}, {:?}",
+                   expected,
+                   colored,
+                   src);
     }
 }
