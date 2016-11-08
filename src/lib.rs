@@ -21,7 +21,7 @@ impl Colorize {
     /// returns an instance of Colorize, with default color mappings.
     pub fn new() -> Colorize {
         Colorize {
-            colors: default_colors(),
+            colors: default_colors().clone(),
             disable: false,
             reset: true,
         }
@@ -76,60 +76,66 @@ impl Colorize {
     }
 }
 
-fn default_colors() -> HashMap<&'static str, &'static str> {
-    let mut default_colors = HashMap::new();
-    default_colors.insert("default", "39");
-    default_colors.insert("_default_", "49");
-    // foreground colors
-    default_colors.insert("black", "30");
-    default_colors.insert("red", "31");
-    default_colors.insert("green", "32");
-    default_colors.insert("yellow", "33");
-    default_colors.insert("blue", "34");
-    default_colors.insert("magenta", "35");
-    default_colors.insert("cyan", "36");
-    default_colors.insert("light_gray", "37");
-    default_colors.insert("dark_gray", "90");
-    default_colors.insert("light_red", "91");
-    default_colors.insert("light_green", "92");
-    default_colors.insert("light_yellow", "93");
-    default_colors.insert("light_blue", "94");
-    default_colors.insert("light_magenta", "95");
-    default_colors.insert("light_cyan", "96");
-    default_colors.insert("white", "97");
+fn default_colors() -> &'static HashMap<&'static str, &'static str> {
+    lazy_static! {
+        static ref DEFAULT_COLORS: HashMap<&'static str, &'static str>  = {
+            let mut default_colors = HashMap::new();
+            default_colors.insert("default", "39");
+            default_colors.insert("_default_", "49");
+            // foreground colors
+            default_colors.insert("black", "30");
+            default_colors.insert("red", "31");
+            default_colors.insert("green", "32");
+            default_colors.insert("yellow", "33");
+            default_colors.insert("blue", "34");
+            default_colors.insert("magenta", "35");
+            default_colors.insert("cyan", "36");
+            default_colors.insert("light_gray", "37");
+            default_colors.insert("dark_gray", "90");
+            default_colors.insert("light_red", "91");
+            default_colors.insert("light_green", "92");
+            default_colors.insert("light_yellow", "93");
+            default_colors.insert("light_blue", "94");
+            default_colors.insert("light_magenta", "95");
+            default_colors.insert("light_cyan", "96");
+            default_colors.insert("white", "97");
 
-    // background colors
-    default_colors.insert("_black_", "40");
-    default_colors.insert("_red_", "41");
-    default_colors.insert("_green_", "42");
-    default_colors.insert("_yellow_", "43");
-    default_colors.insert("_blue_", "44");
-    default_colors.insert("_magenta_", "45");
-    default_colors.insert("_cyan_", "46");
-    default_colors.insert("_light_gray_", "47");
-    default_colors.insert("_dark_gray_", "100");
-    default_colors.insert("_light_red_", "101");
-    default_colors.insert("_light_green_", "102");
-    default_colors.insert("_light_yellow_", "103");
-    default_colors.insert("_light_blue_", "104");
-    default_colors.insert("_light_magenta_", "105");
-    default_colors.insert("_light_cyan_", "106");
-    default_colors.insert("_white_", "107");
+            // background colors
+            default_colors.insert("_black_", "40");
+            default_colors.insert("_red_", "41");
+            default_colors.insert("_green_", "42");
+            default_colors.insert("_yellow_", "43");
+            default_colors.insert("_blue_", "44");
+            default_colors.insert("_magenta_", "45");
+            default_colors.insert("_cyan_", "46");
+            default_colors.insert("_light_gray_", "47");
+            default_colors.insert("_dark_gray_", "100");
+            default_colors.insert("_light_red_", "101");
+            default_colors.insert("_light_green_", "102");
+            default_colors.insert("_light_yellow_", "103");
+            default_colors.insert("_light_blue_", "104");
+            default_colors.insert("_light_magenta_", "105");
+            default_colors.insert("_light_cyan_", "106");
+            default_colors.insert("_white_", "107");
 
-    // attributes
-    default_colors.insert("bold", "1");
-    default_colors.insert("dim", "2");
-    default_colors.insert("underline", "4");
-    default_colors.insert("blink_slow", "5");
-    default_colors.insert("blink_fast", "6");
-    default_colors.insert("invert", "7");
-    default_colors.insert("hidden", "8");
+            // attributes
+            default_colors.insert("bold", "1");
+            default_colors.insert("dim", "2");
+            default_colors.insert("underline", "4");
+            default_colors.insert("blink_slow", "5");
+            default_colors.insert("blink_fast", "6");
+            default_colors.insert("invert", "7");
+            default_colors.insert("hidden", "8");
 
-    // Reset to reset everything to their defaults
-    default_colors.insert("reset", "0");
-    default_colors.insert("reset_bold", "21");
+            // Reset to reset everything to their defaults
+            default_colors.insert("reset", "0");
+            default_colors.insert("reset_bold", "21");
 
-    default_colors
+            default_colors
+        };
+    }
+
+    &DEFAULT_COLORS
 }
 
 
