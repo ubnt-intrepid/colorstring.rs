@@ -1,8 +1,13 @@
 [package]
 name = "colorstring"
-version = "0.1.0"
+version = "0.0.1"
 authors = ["Yusuke Sasaki <yusuke.sasaki.nuem@gmail.com>"]
+description = "Rust's implementation of colorstring.go"
+license = "MIT"
+repository = "https://github.com/ubnt-intrepid/colorstring.rs.git"
+homepage = "https://github.com/ubnt-intrepid/colorstring.rs"
+documentation = "https://docs.rs/colorstring"
 
 [dependencies]
-regex = "*"
-lazy_static = "*"
+regex = "0.2.1"
+lazy_static = "0.2.2"
