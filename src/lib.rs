@@ -3,7 +3,7 @@ extern crate regex;
 extern crate lazy_static;
 
 use std::collections::HashMap;
-use regex::Regex;
+use regex::{Regex, Match};
 
 /// colorizes the strings, giving you the ability to customize
 /// some of the colorization process.
@@ -32,7 +32,7 @@ impl Colorize {
         lazy_static! {
             static ref RE: Regex = Regex::new(r"(?i)\[[a-z0-9_-]+\]").unwrap();
         }
-        let matches: Vec<(usize, usize)> = RE.find_iter(v).collect();
+        let matches: Vec<Match> = RE.find_iter(v).collect();
         if matches.len() == 0 {
             return v.to_owned();
         }
@@ -41,8 +41,9 @@ impl Colorize {
         let mut colored = false;
         let mut m = (0, 0);
         for nm in matches {
-            result += &v[(m.1)..(nm.0)];
-            m = nm;
+            result += &v[(m.1)..(nm.start())];
+            m.0 = nm.start();
+            m.1 = nm.end();
 
             let mut replace = String::new();
             if let Some(ref code) = self.colors.get(&v[(m.0 + 1)..(m.1 - 1)]) {
@@ -72,7 +73,7 @@ impl Colorize {
         lazy_static! {
             static ref RE: Regex = Regex::new(r"^(?i)(\[[a-z0-9_-]+\])+").unwrap();
         }
-        RE.captures(v).and_then(|cap| cap.at(1).map(ToOwned::to_owned))
+        RE.captures(v).and_then(|cap| cap.get(1).map(|m| m.as_str().to_owned()))
     }
 }
 
